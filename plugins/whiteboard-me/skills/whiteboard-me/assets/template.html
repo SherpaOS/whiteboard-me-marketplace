@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Whiteboard Me — {{NAME}}</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Kalam:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  /* ============ WHITEBOARD-SKETCH DESIGN SYSTEM ============
+     Ink palette on warm paper. Everything slightly imperfect:
+     tiny rotations, dashed hand-drawn borders, marker underlines. */
+  :root {
+    --paper: #faf8f2;
+    --ink: #1e2a5a;        /* navy ink — primary text + line work */
+    --ink-soft: #3d4a7a;
+    --accent: #d96f2e;     /* marker orange — values, banner, emphasis */
+    --accent-2: #2e7d6b;   /* teal-green — building / growth items */
+    --accent-3: #6b4fa0;   /* purple — tools ring */
+    --pencil: #8a8fa3;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #e8e6df; display: flex; justify-content: center; }
+  .canvas {
+    position: relative; width: 1600px; height: 2000px; background: var(--paper);
+    font-family: 'Kalam', cursive; color: var(--ink); overflow: hidden;
+    /* faint paper grain */
+    background-image: radial-gradient(circle at 30% 20%, rgba(30,42,90,.025), transparent 40%),
+                      radial-gradient(circle at 75% 80%, rgba(217,111,46,.03), transparent 45%);
+  }
+  .hand   { font-family: 'Caveat', cursive; }
+
+  /* --- sketch borders: double dashed outline, slight rotation --- */
+  .panel {
+    position: absolute; padding: 26px 28px; background: rgba(255,255,255,.55);
+    border: 2.5px solid var(--ink); border-radius: 14px 18px 15px 17px / 17px 14px 18px 15px;
+    box-shadow: 0 0 0 1px rgba(30,42,90,.15) inset;
+  }
+  .panel.tilt-l { transform: rotate(-.8deg); }
+  .panel.tilt-r { transform: rotate(.7deg); }
+  .panel h3 {
+    font-family: 'Caveat', cursive; font-size: 34px; letter-spacing: 1px;
+    margin-bottom: 14px; text-transform: uppercase;
+  }
+  .panel li { list-style: none; font-size: 19px; line-height: 1.45; margin-bottom: 10px; padding-left: 30px; position: relative; }
+  .panel li::before { position: absolute; left: 0; top: 0; font-weight: 700; }
+  .panel.do  li::before   { content: "✓"; color: var(--accent-2); }
+  .panel.build li::before { content: "★"; color: var(--accent); }
+
+  /* --- arc titles (top + section labels around rings) --- */
+  .arc-label { fill: var(--accent); font-family: 'Caveat', cursive; font-size: 34px; font-weight: 700; letter-spacing: 4px; }
+  .arc-label.inner { fill: var(--ink-soft); font-size: 27px; letter-spacing: 3px; }
+
+  /* --- center portrait --- */
+  .center {
+    position: absolute; left: 50%; top: 46%; transform: translate(-50%, -50%);
+    text-align: center; width: 460px; z-index: 5;
+  }
+  .portrait {
+    width: 230px; height: 230px; margin: 0 auto 10px; border-radius: 50%;
+    border: 4px solid var(--ink); overflow: hidden; background: #fff;
+    box-shadow: 0 0 0 10px var(--paper), 0 0 0 12px rgba(30,42,90,.35);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .portrait img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.08); }
+  .portrait .placeholder { font-size: 110px; color: var(--pencil); }
+  .center .name { font-family:'Caveat',cursive; font-size: 52px; font-weight: 700; letter-spacing: 3px; }
+  .center .role { font-size: 24px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+  .center .role2 { font-size: 19px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 1px; }
+
+  /* --- ring nodes (people + tools) --- */
+  .node { position: absolute; width: 150px; text-align: center; transform: translate(-50%,-50%); z-index: 4; }
+  .node .glyph { font-size: 34px; line-height: 1; }
+  .node .lbl { font-size: 17px; line-height: 1.25; font-weight: 700; color: var(--ink); margin-top: 4px; }
+  .node.tool .lbl { color: var(--accent-3); }
+  .node.tool .glyph { color: var(--accent-3); }
+
+  /* --- center-ring bridge phrases --- */
+  .bridge { position: absolute; width: 190px; text-align: center; transform: translate(-50%,-50%);
+            font-family:'Caveat',cursive; font-size: 24px; font-weight: 600; color: var(--ink-soft); z-index: 4; }
+
+  /* --- values (corner + bottom) --- */
+  .value { position: absolute; width: 250px; z-index: 3; }
+  .value .vname { font-family:'Caveat',cursive; font-size: 30px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; }
+  .value .vname .icon { margin-right: 8px; color: var(--ink); }
+  .value .vdesc { font-size: 16.5px; line-height: 1.4; color: var(--ink-soft); }
+  .value.right { text-align: right; }
+
+  /* --- banner ribbon --- */
+  .banner {
+    position: absolute; left: 50%; bottom: 48px; transform: translateX(-50%) rotate(-.4deg);
+    background: rgba(255,255,255,.7); border: 3px solid var(--ink); padding: 16px 60px;
+    border-radius: 6px 10px 7px 9px; font-family:'Caveat',cursive; font-size: 36px; font-weight: 700;
+    white-space: nowrap; z-index: 6;
+  }
+  .banner::before, .banner::after { content: "★"; color: var(--accent); margin: 0 18px; font-size: 26px; vertical-align: 4px; }
+  .watermark {
+    position: absolute; right: 34px; bottom: 18px; z-index: 7; transform: rotate(-1.2deg);
+    font-family: 'Caveat', cursive; font-size: 22px; color: var(--pencil); opacity: .8; letter-spacing: 1px;
+  }
+  .watermark b { color: var(--ink-soft); font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="canvas">
+
+  <!-- ===== RING LINE-WORK + ARC TITLES (SVG layer) =====
+       Rings centered at (800, 920). Radii: bridge 330 / people 470 / tools 620.
+       The dash pattern + 0.6 opacity double-stroke gives the hand-drawn feel. -->
+  <svg width="1600" height="2000" style="position:absolute;inset:0;" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <path id="arcTop"   d="M 210 480 A 780 780 0 0 1 1390 480"/>
+      <path id="arcTools" d="M 290 700 A 640 640 0 0 1 1310 700"/>
+      <path id="arcPeople" d="M 405 780 A 500 500 0 0 1 1195 780"/>
+    </defs>
+    <circle cx="800" cy="920" r="330" fill="none" stroke="var(--ink)" stroke-width="2" stroke-dasharray="14 9" opacity=".55"/>
+    <circle cx="800" cy="920" r="470" fill="none" stroke="var(--ink)" stroke-width="2" stroke-dasharray="3 10" opacity=".5"/>
+    <circle cx="800" cy="920" r="620" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-dasharray="16 10" opacity=".55"/>
+    <text class="arc-label"><textPath href="#arcTop" startOffset="50%" text-anchor="middle">— {{TOP_ARC_TITLE}} —</textPath></text>
+    <text class="arc-label inner"><textPath href="#arcTools" startOffset="50%" text-anchor="middle">• {{TOOLS_RING_TITLE}} •</textPath></text>
+  </svg>
+
+  <!-- ===== CENTER ===== -->
+  <div class="center">
+    <div class="portrait">
+      <!-- Replace with <img src="..."> when a headshot is provided -->
+      <span class="placeholder">☺</span>
+    </div>
+    <div class="name">{{NAME}}</div>
+    <div class="role">{{ROLE}}</div>
+    <div class="role2">{{ROLE_LINE_2}}</div>
+  </div>
+
+  <!-- ===== BRIDGE RING (r≈330): 3-5 phrases at angles avoiding the panels.
+       position: left = 800 + r·cos(θ), top = 920 + r·sin(θ)  (θ in deg, 0 = east) -->
+  <div class="bridge" style="left:520px; top:750px;">{{BRIDGE_1}}</div>
+  <div class="bridge" style="left:1080px; top:750px;">{{BRIDGE_2}}</div>
+  <div class="bridge" style="left:800px; top:1215px;">{{BRIDGE_3}}</div>
+
+  <!-- ===== PEOPLE RING (r≈470): 6-12 generic-icon nodes, evenly spread.
+       Use 👤 / 👥 / 🏛 style glyphs — never real faces unless supplied. -->
+  <div class="node" style="left:800px; top:435px;"><div class="glyph">👥</div><div class="lbl">{{PEOPLE_1}}</div></div>
+  <div class="node" style="left:1140px; top:565px;"><div class="glyph">👤</div><div class="lbl">{{PEOPLE_2}}</div></div>
+  <div class="node" style="left:1265px; top:920px;"><div class="glyph">👤</div><div class="lbl">{{PEOPLE_3}}</div></div>
+  <div class="node" style="left:1140px; top:1275px;"><div class="glyph">👥</div><div class="lbl">{{PEOPLE_4}}</div></div>
+  <div class="node" style="left:800px; top:1400px;"><div class="glyph">👤</div><div class="lbl">{{PEOPLE_5}}</div></div>
+  <div class="node" style="left:460px; top:1275px;"><div class="glyph">👥</div><div class="lbl">{{PEOPLE_6}}</div></div>
+  <div class="node" style="left:335px; top:920px;"><div class="glyph">👤</div><div class="lbl">{{PEOPLE_7}}</div></div>
+  <div class="node" style="left:460px; top:565px;"><div class="glyph">👥</div><div class="lbl">{{PEOPLE_8}}</div></div>
+
+  <!-- ===== TOOLS RING (r≈620): 6-10 nodes. Skip angles occupied by side panels
+       (roughly 150°-210° and 330°-30°) or move those nodes above/below panels. -->
+  <div class="node tool" style="left:610px; top:340px;"><div class="glyph">⚙️</div><div class="lbl">{{TOOL_1}}</div></div>
+  <div class="node tool" style="left:990px; top:340px;"><div class="glyph">✨</div><div class="lbl">{{TOOL_2}}</div></div>
+  <div class="node tool" style="left:1330px; top:600px;"><div class="glyph">📊</div><div class="lbl">{{TOOL_3}}</div></div>
+  <div class="node tool" style="left:1420px; top:920px;"><div class="glyph">🛡</div><div class="lbl">{{TOOL_4}}</div></div>
+  <div class="node tool" style="left:1330px; top:1240px;"><div class="glyph">🔗</div><div class="lbl">{{TOOL_5}}</div></div>
+  <div class="node tool" style="left:990px; top:1500px;"><div class="glyph">☁️</div><div class="lbl">{{TOOL_6}}</div></div>
+  <div class="node tool" style="left:610px; top:1500px;"><div class="glyph">🧩</div><div class="lbl">{{TOOL_7}}</div></div>
+  <div class="node tool" style="left:270px; top:1240px;"><div class="glyph">📱</div><div class="lbl">{{TOOL_8}}</div></div>
+  <div class="node tool" style="left:180px; top:920px;"><div class="glyph">🤖</div><div class="lbl">{{TOOL_9}}</div></div>
+  <div class="node tool" style="left:270px; top:600px;"><div class="glyph">💾</div><div class="lbl">{{TOOL_10}}</div></div>
+
+  <!-- ===== CORNER VALUES (top-left / top-right stacks, 2-4 each) ===== -->
+  <div class="value" style="left:60px; top:150px;">
+    <div class="vname"><span class="icon">🛡</span>{{VALUE_1}}</div>
+    <div class="vdesc">{{VALUE_1_DESC}}</div>
+  </div>
+  <div class="value" style="left:60px; top:300px;">
+    <div class="vname"><span class="icon">🔍</span>{{VALUE_2}}</div>
+    <div class="vdesc">{{VALUE_2_DESC}}</div>
+  </div>
+  <div class="value right" style="right:60px; top:150px;">
+    <div class="vname"><span class="icon">🌍</span>{{VALUE_3}}</div>
+    <div class="vdesc">{{VALUE_3_DESC}}</div>
+  </div>
+  <div class="value right" style="right:60px; top:300px;">
+    <div class="vname"><span class="icon">💡</span>{{VALUE_4}}</div>
+    <div class="vdesc">{{VALUE_4_DESC}}</div>
+  </div>
+
+  <!-- ===== SIDE PANELS ===== -->
+  <div class="panel do tilt-l" style="left:48px; top:1080px; width:330px;">
+    <h3>What I Do</h3>
+    <ul>
+      <li>{{DO_1}}</li><li>{{DO_2}}</li><li>{{DO_3}}</li><li>{{DO_4}}</li><li>{{DO_5}}</li>
+    </ul>
+  </div>
+  <div class="panel build tilt-r" style="right:48px; top:1080px; width:330px;">
+    <h3>What I'm Building</h3>
+    <ul>
+      <li>{{BUILD_1}}</li><li>{{BUILD_2}}</li><li>{{BUILD_3}}</li><li>{{BUILD_4}}</li>
+    </ul>
+  </div>
+
+  <!-- ===== BOTTOM VALUES ROW (2-4 more values, horizontal) ===== -->
+  <div class="value" style="left:170px; bottom:190px; width:300px;">
+    <div class="vname"><span class="icon">⚖️</span>{{VALUE_5}}</div>
+    <div class="vdesc">{{VALUE_5_DESC}}</div>
+  </div>
+  <div class="value" style="left:650px; bottom:190px; width:300px;">
+    <div class="vname"><span class="icon">🧭</span>{{VALUE_6}}</div>
+    <div class="vdesc">{{VALUE_6_DESC}}</div>
+  </div>
+  <div class="value" style="right:170px; bottom:190px; width:300px;">
+    <div class="vname"><span class="icon">❤️</span>{{VALUE_7}}</div>
+    <div class="vdesc">{{VALUE_7_DESC}}</div>
+  </div>
+
+  <!-- ===== TAGLINE BANNER ===== -->
+  <div class="banner">{{TAGLINE}}</div>
+
+  <!-- ===== WATERMARK (on by default; remove if the user asks) ===== -->
+  <div class="watermark">⛰ made with <b>Sherpa OS</b></div>
+
+</div>
+</body>
+</html>
