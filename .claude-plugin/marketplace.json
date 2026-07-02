@@ -1,0 +1,19 @@
+{
+  "name": "whiteboard-me",
+  "owner": {
+    "name": "Sherpa HQ / Jamie White",
+    "url": "https://s4o.ai"
+  },
+  "metadata": {
+    "description": "Public marketplace for the Whiteboard-Me plugin. Mirror of the whiteboard-me module from Sherpa OS.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "whiteboard-me",
+      "source": "./plugins/whiteboard-me",
+      "description": "Whiteboard-Me — research-grounded work-life map: a whiteboard-sketch infographic of who you are professionally today, rendered as crisp HTML/SVG (never a one-shot AI image). Deterministic ink-sketch portrait, business/entity mode, Instagram teaser variant.",
+      "author": { "name": "Sherpa HQ / Jamie White" }
+    }
+  ]
+}
