@@ -32,9 +32,12 @@ retraces it. Implementation:
   (band 280–390), tools at r≈447 (band 390–500). Node width ≤140px — wider
   nodes touch both circles near 3 and 9 o'clock (radial span = half-width
   there). Even angular spacing; per-node rotation ±2°.
-- **Bridge phrases stack ABOVE the portrait inside the inner ring** (plus one
-  below the roles line). Never place them at ring-edge 2/10 o'clock — they
-  collide with the corner nodes.
+- **Bridge phrases CURVE on nested arcs above the portrait** — SVG textPath on
+  concentric arcs inside the inner ring (e.g. r≈255 apex then r≈212 apex), so
+  the top of the map reads as four nested arcs of hand-lettering (main title →
+  tools title → people title → bridge phrases). One phrase below the roles
+  line stays straight to anchor the text block. Never place bridges at
+  ring-edge 2/10 o'clock — they collide with the corner nodes.
 - **Values: 3 per side on the far left/right edges. Panels: BELOW the rings**
   in the bottom corners (never mid-height — they trap ring nodes). Banner
   bottom-center; watermark corner.
@@ -48,6 +51,7 @@ N-page, ClickUp chevron, GitHub octocat outline, n8n node-chain, GHL steps…)
 and monogram marks for the owner's own brands — offer to trace real logo files
 if the user has them. Handwriting fonts lack → and ⛰ glyphs — in raster
 compositions draw arrows/mountains as strokes or they render as tofu boxes.
+(SVG/HTML text gets per-glyph browser fallback, so → is safe there.)
 
 ## Portrait tiers (the make-or-break element — iterate here hardest)
 
