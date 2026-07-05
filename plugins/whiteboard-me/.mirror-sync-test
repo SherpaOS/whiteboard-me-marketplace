@@ -1,4 +1,0 @@
-# Mirror sync verification marker
-# Purpose: trigger mirror-whiteboard.yml to confirm the auto-sync Action fires on a real push to plugins/whiteboard-me/**
-# Created: 2026-07-05 by Cowork (gm-resume verification path)
-# Safe to delete once the sherpa-os-bot sync commit is confirmed in whiteboard-me-marketplace.
