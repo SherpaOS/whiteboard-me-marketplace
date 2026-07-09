@@ -1,6 +1,6 @@
 {
   "name": "whiteboard-me",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Whiteboard-Me — research-grounded work-life map: a whiteboard-sketch infographic of who you are professionally today (what you do, who you work with, values, tools, what you're building), grounded in the owner OS and rendered as crisp HTML/SVG — never a one-shot AI image. v0.2: locked landscape layout with drawn (never dashed) rings, sketched logo icons, tiered portrait pipeline (AI sketch redraw → Adobe vectorize → deterministic), IG teaser recipe, and GHL Social Planner draft staging. The shareable wedge.",
   "author": { "name": "Sherpa HQ / Jamie White" },
   "homepage": "https://s4o.ai"
